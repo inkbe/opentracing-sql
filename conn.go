@@ -70,6 +70,9 @@ func (c *conn) Exec(query string, args []driver.Value) (driver.Result, error) {
 // Exec implements driver.StmtExecContext ExecContext.
 func (c *conn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
 	s := c.tracer.newSpan(ctx)
+	if c.tracer.saveQuery {
+		s.SetTag(TagQuery, query)
+	}
 	defer s.Finish()
 	if execerContext, ok := c.conn.(driver.ExecerContext); ok {
 		r, err := execerContext.ExecContext(ctx, query, args)
@@ -103,6 +106,9 @@ func (c *conn) Query(query string, args []driver.Value) (driver.Rows, error) {
 // QueryContext implements Driver.QueryerContext QueryContext.
 func (c *conn) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (rows driver.Rows, err error) {
 	s := c.tracer.newSpan(ctx)
+	if c.tracer.saveQuery {
+		s.SetTag(TagQuery, query)
+	}
 	defer s.Finish()
 	if queryerContext, ok := c.conn.(driver.QueryerContext); ok {
 		rows, err := queryerContext.QueryContext(ctx, query, args)

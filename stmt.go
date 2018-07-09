@@ -34,6 +34,9 @@ func (s *stmt) Query(args []driver.Value) (driver.Rows, error) {
 // ExecContext implements driver.ExecerContext ExecContext.
 func (s *stmt) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
 	span := s.tracer.newSpan(ctx)
+	if s.tracer.saveQuery {
+		span.SetTag(TagQuery, query)
+	}
 	defer span.Finish()
 	if execerContext, ok := s.stmt.(driver.ExecerContext); ok {
 		return execerContext.ExecContext(ctx, query, args)
@@ -48,6 +51,9 @@ func (s *stmt) ExecContext(ctx context.Context, query string, args []driver.Name
 // QueryContext implements Driver.QueryerContext QueryContext.
 func (s *stmt) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (rows driver.Rows, err error) {
 	span := s.tracer.newSpan(ctx)
+	if s.tracer.saveQuery {
+		span.SetTag(TagQuery, query)
+	}
 	defer span.Finish()
 	if queryerContext, ok := s.stmt.(driver.QueryerContext); ok {
 		rows, err := queryerContext.QueryContext(ctx, query, args)

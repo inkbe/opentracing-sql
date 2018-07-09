@@ -12,6 +12,9 @@ import (
 // ErrUnsupported is an error returned when the underlying driver doesn't provide a given function.
 var ErrUnsupported = errors.New("operation unsupported by the underlying driver")
 
+// TagQuery is a span tag for SQL queries.
+const TagQuery = "query"
+
 // SpanNameFunc defines a function which returns a name for the span which is being created on traceable operations.
 // Passing span naming function is optional, however it gives the user a way to use a custom naming strategy. To allow
 // getting some more information related to the current call, the context, which is passed with the call, is propagated
