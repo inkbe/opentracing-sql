@@ -46,6 +46,10 @@ The following features from instrumentedsql package are not supported:
 - Don't log exact query args.
 - Creating spans for LastInsertId, RowsAffected.
 
+## Documentation
+
+[GoDoc documentation](https://godoc.org/github.com/inkbe/opentracing-sql)
+
 ## References
 
 [OpenTracing project](http://opentracing.io)
