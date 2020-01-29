@@ -40,9 +40,9 @@ func SaveQuery(f SpanNameFunc) func(*tracingDriver) {
 
 // Open implements driver.Driver Open.
 func (d *tracingDriver) Open(name string) (driver.Conn, error) {
-	conn, err := d.driver.Open(name)
+	c, err := d.driver.Open(name)
 	if err != nil {
 		return nil, err
 	}
-	return &conn{conn: conn, tracer: d.tracer}, nil
+	return &conn{conn: c, tracer: d.tracer}, nil
 }
