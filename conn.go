@@ -13,11 +13,11 @@ type conn struct {
 
 // Prepare implements driver.Conn Prepare.
 func (c *conn) Prepare(query string) (driver.Stmt, error) {
-	stmt, err := c.conn.Prepare(query)
+	s, err := c.conn.Prepare(query)
 	if err != nil {
 		return nil, err
 	}
-	return &stmt{stmt: stmt, tracer: c.tracer}, nil
+	return &stmt{stmt: s, tracer: c.tracer}, nil
 }
 
 // Prepare implements driver.Conn Close.
@@ -27,22 +27,22 @@ func (c *conn) Close() error {
 
 // Prepare implements driver.Conn Begin.
 func (c *conn) Begin() (driver.Tx, error) {
-	tx, err := c.conn.Begin()
+	t, err := c.conn.Begin()
 	if err != nil {
 		return nil, err
 	}
-	return &tx{tx: tx, tracer: c.tracer}, nil
+	return &tx{tx: t, tracer: c.tracer}, nil
 }
 
 // BeginTx implements driver.ConnBeginTx BeginTx.
 func (c *conn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, error) {
 	s := c.tracer.newSpan(ctx)
 	if connBeginTx, ok := c.conn.(driver.ConnBeginTx); ok {
-		tx, err := connBeginTx.BeginTx(ctx, opts)
+		t, err := connBeginTx.BeginTx(ctx, opts)
 		if err != nil {
 			return nil, err
 		}
-		return &tx{tx: tx, tracer: c.tracer, span: s}, nil
+		return &tx{tx: t, tracer: c.tracer, span: s}, nil
 	}
 	return c.conn.Begin()
 }
@@ -50,11 +50,11 @@ func (c *conn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, e
 // PrepareContext implements driver.ConnPrepareContext PrepareContext.
 func (c *conn) PrepareContext(ctx context.Context, query string) (driver.Stmt, error) {
 	if connPrepareContext, ok := c.conn.(driver.ConnPrepareContext); ok {
-		stmt, err := connPrepareContext.PrepareContext(ctx, query)
+		s, err := connPrepareContext.PrepareContext(ctx, query)
 		if err != nil {
 			return nil, err
 		}
-		return &stmt{stmt: stmt, tracer: c.tracer}, nil
+		return &stmt{stmt: s, tracer: c.tracer}, nil
 	}
 	return c.conn.Prepare(query)
 }
