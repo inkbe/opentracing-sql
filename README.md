@@ -35,7 +35,7 @@ Note that only calls to context-aware DB functions will be traced (e.g. db.Query
 
 ## Comparison with existing packages
 
-There is an existing package https://github.com/ExpansiveWorlds/instrumentedsql which uses the same approach by wrapping
+There is an existing package [github.com/luna-duclos/instrumentedsql](https://pkg.go.dev/github.com/luna-duclos/instrumentedsql) which uses the same approach by wrapping
 an existing driver with a tracer, however the current implementation provides the following features:
 - Pass custom naming function to name spans according to your needs.
 - Option to enable/disable logging of SQL queries.
