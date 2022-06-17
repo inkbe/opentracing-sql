@@ -1,6 +1,7 @@
 package sql
 
 import (
+	"context"
 	"database/sql/driver"
 
 	"github.com/opentracing/opentracing-go"
@@ -22,20 +23,6 @@ func NewTracingDriver(d driver.Driver, t opentracing.Tracer, options ...func(*tr
 		td.tracer.nameFunc = defaultNameFunc
 	}
 	return td
-}
-
-// SpanNameFunction is an option for using a custom span naming function.
-func SpanNameFunction(f SpanNameFunc) func(*tracingDriver) {
-	return func(d *tracingDriver) {
-		d.tracer.nameFunc = f
-	}
-}
-
-// SaveQuery is an option for saving SQL queries.
-func SaveQuery(f SpanNameFunc) func(*tracingDriver) {
-	return func(d *tracingDriver) {
-		d.tracer.saveQuery = true
-	}
 }
 
 // Open implements driver.Driver Open.
