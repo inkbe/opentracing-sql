@@ -1,7 +1,6 @@
 package sql
 
 import (
-	"context"
 	"database/sql/driver"
 
 	"github.com/opentracing/opentracing-go"
