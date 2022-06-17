@@ -24,20 +24,6 @@ func NewTracingDriver(d driver.Driver, t opentracing.Tracer, options ...func(*tr
 	return td
 }
 
-// SpanNameFunction is an option for using a custom span naming function.
-func SpanNameFunction(f SpanNameFunc) func(*tracingDriver) {
-	return func(d *tracingDriver) {
-		d.tracer.nameFunc = f
-	}
-}
-
-// SaveQuery is an option for saving SQL queries.
-func SaveQuery(f SpanNameFunc) func(*tracingDriver) {
-	return func(d *tracingDriver) {
-		d.tracer.saveQuery = true
-	}
-}
-
 // Open implements driver.Driver Open.
 func (d *tracingDriver) Open(name string) (driver.Conn, error) {
 	c, err := d.driver.Open(name)

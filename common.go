@@ -12,8 +12,14 @@ import (
 // ErrUnsupported is an error returned when the underlying driver doesn't provide a given function.
 var ErrUnsupported = errors.New("operation unsupported by the underlying driver")
 
-// TagQuery is a span tag for SQL queries.
-const TagQuery = "query"
+// spanTagQuery is a span tag for SQL queries.
+var spanTagQuery = "query"
+
+// SetTagQuery sets a span tag for SQL queries.
+// Use in init funcs only.
+func SetTagQuery(tag string) {
+	spanTagQuery = tag
+}
 
 // SpanNameFunc defines a function which returns a name for the span which is being created on traceable operations.
 // Passing span naming function is optional, however it gives the user a way to use a custom naming strategy. To allow
@@ -23,9 +29,10 @@ type SpanNameFunc func(context.Context) string
 
 // tracer defines a set of instances for collecting spans.
 type tracer struct {
-	t         opentracing.Tracer
-	nameFunc  SpanNameFunc
-	saveQuery bool
+	t            opentracing.Tracer
+	nameFunc     SpanNameFunc
+	observerFunc func(context.Context, opentracing.Span)
+	saveQuery    bool
 }
 
 // newSpan creates a new opentracing.Span instance from the given context.
@@ -37,6 +44,9 @@ func (t *tracer) newSpan(ctx context.Context) opentracing.Span {
 		opts = append(opts, opentracing.ChildOf(parent.Context()))
 	}
 	span := t.t.StartSpan(name, opts...)
+	if t.observerFunc != nil {
+		t.observerFunc(ctx, span)
+	}
 	return span
 }
 
